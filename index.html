@@ -1,0 +1,318 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=yes, viewport-fit=cover">
+  <title>Tesla Investment | Admin Panel</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,300;14..32,400;14..32,500;14..32,600;14..32,700;14..32,800;14..32,900&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --tesla-red: #E82127; --gold: #C8A96E; --green: #00E676; --blue: #448AFF; --purple: #7C4DFF;
+      --gradient-red: linear-gradient(135deg, #E82127 0%, #B8151A 100%);
+      --gradient-gold: linear-gradient(135deg, #C8A96E 0%, #A88B4A 100%);
+      --glass-bg: rgba(22,24,30,0.75); --glass-border: rgba(255,255,255,0.07);
+      --transition: all 0.35s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body, html {
+      font-family: 'Inter', sans-serif; background: #08090C; color: #FFFFFF;
+      min-height: 100vh; -webkit-font-smoothing: antialiased;
+      background-image: radial-gradient(ellipse at 20% 20%, rgba(232,33,39,0.06) 0%, transparent 50%);
+    }
+    input, select { font-size: 16px !important; }
+    .admin-header {
+      background: rgba(8,9,12,0.98); backdrop-filter: blur(40px); border-bottom: 1px solid rgba(255,255,255,0.05);
+      position: sticky; top: 0; z-index: 1000; padding: 14px 0;
+    }
+    .header-inner {
+      max-width: 1400px; margin: 0 auto; padding: 0 20px;
+      display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 12px;
+    }
+    .logo-area { display: flex; align-items: center; gap: 10px; text-decoration: none; }
+    .logo-svg { width: 34px; height: 34px; filter: drop-shadow(0 0 14px rgba(232,33,39,0.5)); }
+    .logo-text { font-family: 'Space Grotesk', sans-serif; font-size: 22px; font-weight: 700; letter-spacing: -0.5px; }
+    .logo-text span { color: var(--tesla-red); }
+    .admin-badge {
+      background: rgba(232,33,39,0.15); color: var(--tesla-red); font-size: 10px;
+      padding: 6px 14px; border-radius: 20px; font-weight: 600; letter-spacing: 0.5px; text-transform: uppercase;
+    }
+    .admin-main { max-width: 1400px; margin: 0 auto; padding: 20px; display: grid; grid-template-columns: 1fr; gap: 18px; }
+    .card {
+      background: var(--glass-bg); backdrop-filter: blur(30px); border: 1px solid var(--glass-border);
+      border-radius: 18px; padding: 22px; transition: var(--transition);
+    }
+    .card-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 18px; flex-wrap: wrap; gap: 10px; }
+    .card-title { font-family: 'Space Grotesk', sans-serif; font-size: 15px; font-weight: 600; color: #B0B3B8; display: flex; align-items: center; gap: 10px; }
+    .card-title i { font-size: 16px; }
+    .stats-row { display: grid; grid-template-columns: repeat(5, 1fr); gap: 14px; }
+    .stat-card {
+      background: rgba(255,255,255,0.02); border: 1px solid rgba(255,255,255,0.05);
+      border-radius: 14px; padding: 18px; text-align: center;
+    }
+    .stat-card .value { font-family: 'Space Grotesk', sans-serif; font-size: 24px; font-weight: 700; }
+    .stat-card .label { font-size: 10px; color: #6B7280; text-transform: uppercase; letter-spacing: 0.6px; margin-top: 4px; }
+    .form-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; }
+    .form-group { display: flex; flex-direction: column; gap: 6px; }
+    .form-group label { font-size: 10px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.6px; color: #9BA0A8; }
+    .form-input {
+      background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.1); border-radius: 10px;
+      padding: 11px 14px; font-size: 14px; font-family: 'Inter', sans-serif; color: #FFFFFF;
+      outline: none; transition: var(--transition); width: 100%;
+    }
+    .form-input:focus { border-color: var(--tesla-red); box-shadow: 0 0 0 3px rgba(232,33,39,0.05); }
+    .form-input::placeholder { color: #5A5E66; }
+    .form-select {
+      background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.1); border-radius: 10px;
+      padding: 11px 14px; font-size: 14px; font-family: 'Inter', sans-serif; color: #FFFFFF;
+      outline: none; transition: var(--transition); width: 100%; cursor: pointer;
+      appearance: none; -webkit-appearance: none;
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' fill='%238B8F96' viewBox='0 0 16 16'%3E%3Cpath d='M8 11L3 6h10z'/%3E%3C/svg%3E");
+      background-repeat: no-repeat; background-position: right 12px center; padding-right: 36px;
+    }
+    .form-select option { background: #1A1C23; color: #FFFFFF; }
+    .btn {
+      padding: 11px 20px; border-radius: 10px; font-weight: 600; font-size: 12px; cursor: pointer;
+      transition: var(--transition); border: none; text-decoration: none; display: inline-flex;
+      align-items: center; justify-content: center; gap: 6px; letter-spacing: 0.3px;
+      text-transform: uppercase; font-family: 'Inter', sans-serif; min-height: 42px; white-space: nowrap;
+    }
+    .btn-red { background: var(--gradient-red); color: #FFF; box-shadow: 0 6px 20px rgba(232,33,39,0.25); }
+    .btn-red:hover { transform: translateY(-2px); box-shadow: 0 10px 28px rgba(232,33,39,0.4); }
+    .btn-green { background: linear-gradient(135deg, #00E676 0%, #00C853 100%); color: #0A0B0E; font-weight: 700; }
+    .btn-green:hover { transform: translateY(-2px); }
+    .btn-outline { background: transparent; border: 1.5px solid rgba(255,255,255,0.2); color: #B0B3B8; }
+    .btn-outline:hover { border-color: rgba(255,255,255,0.4); color: #FFF; }
+    .btn-danger { background: transparent; border: 1.5px solid rgba(232,33,39,0.3); color: #FF6B70; }
+    .btn-danger:hover { background: rgba(232,33,39,0.1); border-color: var(--tesla-red); }
+    .btn-sm { padding: 7px 14px; font-size: 10px; min-height: 32px; }
+    .btn:disabled { opacity: 0.5; cursor: not-allowed; transform: none !important; }
+    .table-wrapper { overflow-x: auto; -webkit-overflow-scrolling: touch; }
+    table { width: 100%; border-collapse: collapse; font-size: 12px; }
+    th { text-align: left; padding: 12px 10px; font-size: 10px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px; color: #6B7280; border-bottom: 1px solid rgba(255,255,255,0.06); }
+    td { padding: 10px; border-bottom: 1px solid rgba(255,255,255,0.03); }
+    .badge {
+      display: inline-block; padding: 3px 10px; border-radius: 12px; font-size: 10px; font-weight: 600;
+    }
+    .badge-buy { background: rgba(232,33,39,0.1); color: #E82127; }
+    .badge-sell { background: rgba(0,230,118,0.1); color: #00E676; }
+    .badge-gift { background: rgba(200,169,110,0.1); color: #C8A96E; }
+    .badge-admin { background: rgba(68,138,255,0.1); color: #448AFF; }
+    .toast {
+      position: fixed; top: 20px; left: 50%; transform: translateX(-50%) translateY(-120px);
+      padding: 12px 22px; border-radius: 14px; font-size: 13px; z-index: 9999;
+      transition: transform 0.4s ease; font-weight: 500; display: flex; align-items: center; gap: 8px;
+      backdrop-filter: blur(30px);
+    }
+    .toast.show { transform: translateX(-50%) translateY(0); }
+    .toast.success { background: rgba(0,200,83,0.15); border: 1px solid rgba(0,200,83,0.3); color: #00E676; }
+    .toast.error { background: rgba(232,33,39,0.15); border: 1px solid rgba(232,33,39,0.3); color: #FF6B70; }
+    .spinner { width: 14px; height: 14px; border: 2px solid rgba(255,255,255,0.2); border-top-color: #FFF; border-radius: 50%; animation: spin 0.7s linear infinite; display: inline-block; }
+    @keyframes spin { to { transform: rotate(360deg); } }
+    @media (max-width: 900px) { .stats-row { grid-template-columns: repeat(3, 1fr); } .form-grid { grid-template-columns: 1fr 1fr; } }
+    @media (max-width: 600px) { .stats-row { grid-template-columns: repeat(2, 1fr); } .form-grid { grid-template-columns: 1fr; } .admin-main { padding: 12px; gap: 12px; } .card { padding: 16px; } }
+  </style>
+</head>
+<body>
+  <div class="toast" id="toast"><i class="fas fa-check-circle"></i><span id="toastMsg"></span></div>
+  <header class="admin-header">
+    <div class="header-inner">
+      <a href="#" class="logo-area">
+        <svg class="logo-svg" viewBox="0 0 40 40" fill="none">
+          <defs><linearGradient id="lg" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" style="stop-color:#E82127"/><stop offset="100%" style="stop-color:#B8151A"/></linearGradient></defs>
+          <path d="M20 2L37 34H3L20 2Z" fill="url(#lg)"/><path d="M20 8L31 30H9L20 8Z" fill="#FFFFFF"/>
+        </svg>
+        <span class="logo-text">TESLA<span>.</span> ADMIN</span>
+      </a>
+      <div style="display:flex; gap:10px; align-items:center; flex-wrap:wrap;">
+        <span class="admin-badge"><i class="fas fa-shield-alt"></i> Administrator</span>
+        <a href="index.html" class="btn btn-outline btn-sm"><i class="fas fa-arrow-left"></i> Dashboard</a>
+      </div>
+    </div>
+  </header>
+
+  <main class="admin-main">
+    <!-- STATS -->
+    <div class="card">
+      <div class="card-header"><span class="card-title"><i class="fas fa-chart-pie" style="color:var(--gold);"></i> Account Overview</span></div>
+      <div class="stats-row" id="statsRow">
+        <div class="stat-card"><div class="value" id="sPortfolio">$0</div><div class="label">Portfolio</div></div>
+        <div class="stat-card"><div class="value" id="sCash">$0</div><div class="label">Cash</div></div>
+        <div class="stat-card"><div class="value" id="sInvested">$0</div><div class="label">Invested</div></div>
+        <div class="stat-card"><div class="value" id="sGift">$0</div><div class="label">Gift Credits</div></div>
+        <div class="stat-card"><div class="value" id="sTrades">0</div><div class="label">Total Trades</div></div>
+      </div>
+    </div>
+
+    <!-- EDIT BALANCES -->
+    <div class="card">
+      <div class="card-header"><span class="card-title"><i class="fas fa-edit" style="color:var(--blue);"></i> Edit Balances</span></div>
+      <form id="balanceForm" class="form-grid">
+        <div class="form-group"><label>Portfolio Value ($)</label><input type="number" class="form-input" id="ePortfolio" step="0.01"></div>
+        <div class="form-group"><label>Available Cash ($)</label><input type="number" class="form-input" id="eCash" step="0.01"></div>
+        <div class="form-group"><label>Investments Value ($)</label><input type="number" class="form-input" id="eInvested" step="0.01"></div>
+        <div class="form-group"><label>Gift Credits ($)</label><input type="number" class="form-input" id="eGift" step="0.01"></div>
+        <div class="form-group"><label>Total Trades</label><input type="number" class="form-input" id="eTrades"></div>
+        <div class="form-group" style="display:flex; align-items:flex-end;"><button type="submit" class="btn btn-red" id="balanceBtn"><i class="fas fa-save"></i> Update Balances</button></div>
+      </form>
+    </div>
+
+    <!-- ADD TRANSACTION -->
+    <div class="card">
+      <div class="card-header"><span class="card-title"><i class="fas fa-plus-circle" style="color:var(--green);"></i> Add Transaction</span></div>
+      <form id="addTxForm" class="form-grid">
+        <div class="form-group"><label>Type</label><select class="form-select" id="txType"><option value="buy">Buy / Invest</option><option value="sell">Sell</option><option value="gift">Gift Card</option><option value="admin">Admin</option></select></div>
+        <div class="form-group"><label>Asset / Code</label><input type="text" class="form-input" id="txAsset" placeholder="e.g. BTC or Gift Code"></div>
+        <div class="form-group"><label>Amount ($)</label><input type="number" class="form-input" id="txAmount" step="0.01" placeholder="0.00"></div>
+        <div class="form-group" style="display:flex; align-items:flex-end;"><button type="submit" class="btn btn-green" id="addTxBtn"><i class="fas fa-plus"></i> Add</button></div>
+      </form>
+    </div>
+
+    <!-- TRANSACTIONS -->
+    <div class="card">
+      <div class="card-header">
+        <span class="card-title"><i class="fas fa-list-ul" style="color:var(--purple);"></i> Transaction History</span>
+        <span style="font-size:12px; color:#6B7280;" id="txCount">0 transactions</span>
+      </div>
+      <div class="table-wrapper">
+        <table>
+          <thead><tr><th>#</th><th>Type</th><th>Asset/Code</th><th>Amount</th><th>Time</th><th>Actions</th></tr></thead>
+          <tbody id="txTableBody"></tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- DANGER ZONE -->
+    <div class="card" style="border-color: rgba(232,33,39,0.2);">
+      <div class="card-header"><span class="card-title" style="color:#FF6B70;"><i class="fas fa-skull"></i> Danger Zone</span></div>
+      <p style="font-size:12px; color:#6B7280; margin-bottom:14px;">This will reset all data to default values. This action cannot be undone.</p>
+      <button class="btn btn-danger" id="resetBtn"><i class="fas fa-trash-alt"></i> Reset Everything</button>
+    </div>
+  </main>
+
+  <script>
+    (() => {
+      const API = 'https://samei.up.railway.app';
+      const fc = (a) => '$' + a.toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ',');
+      let allData = null;
+
+      function toast(msg, type='success') {
+        const t = document.getElementById('toast');
+        const m = document.getElementById('toastMsg');
+        m.textContent = msg;
+        t.className = 'toast ' + type + ' show';
+        t.querySelector('i').className = type==='success' ? 'fas fa-check-circle' : 'fas fa-exclamation-circle';
+        clearTimeout(t._t); t._t = setTimeout(() => t.classList.remove('show'), 3000);
+      }
+
+      async function fetchData() {
+        try {
+          const res = await fetch(`${API}/api/admin/data`);
+          allData = await res.json();
+          renderAll();
+        } catch(e) { toast('Failed to load data', 'error'); }
+      }
+
+      function renderAll() {
+        document.getElementById('sPortfolio').textContent = fc(allData.portfolioValue);
+        document.getElementById('sCash').textContent = fc(allData.availableCash);
+        document.getElementById('sInvested').textContent = fc(allData.investmentsValue);
+        document.getElementById('sGift').textContent = fc(allData.giftCredits);
+        document.getElementById('sTrades').textContent = allData.totalTrades;
+        document.getElementById('ePortfolio').value = allData.portfolioValue;
+        document.getElementById('eCash').value = allData.availableCash;
+        document.getElementById('eInvested').value = allData.investmentsValue;
+        document.getElementById('eGift').value = allData.giftCredits;
+        document.getElementById('eTrades').value = allData.totalTrades;
+        document.getElementById('txCount').textContent = (allData.transactions||[]).length + ' transactions';
+        renderTable();
+      }
+
+      function renderTable() {
+        const tbody = document.getElementById('txTableBody');
+        const txs = allData.transactions || [];
+        if (txs.length === 0) {
+          tbody.innerHTML = '<tr><td colspan="6" style="text-align:center;color:#6B7280;padding:30px;">No transactions</td></tr>';
+          return;
+        }
+        tbody.innerHTML = txs.map((tx, i) => {
+          const typeBadge = tx.type === 'buy' ? 'badge-buy' : tx.type === 'sell' ? 'badge-sell' : tx.type === 'gift' ? 'badge-gift' : 'badge-admin';
+          const time = tx.time ? new Date(tx.time).toLocaleString([], {month:'short', day:'numeric', hour:'2-digit', minute:'2-digit'}) : '';
+          return `<tr>
+            <td>${i+1}</td>
+            <td><span class="badge ${typeBadge}">${tx.type||'N/A'}</span></td>
+            <td>${tx.asset||tx.code||'-'}</td>
+            <td style="font-weight:600;">${fc(tx.amount||0)}</td>
+            <td style="font-size:11px; color:#8B8F96;">${time}</td>
+            <td><button class="btn btn-outline btn-sm" onclick="deleteTx(${i})" title="Delete"><i class="fas fa-trash"></i></button></td>
+          </tr>`;
+        }).join('');
+      }
+
+      window.deleteTx = async function(index) {
+        if (!confirm('Delete this transaction?')) return;
+        try {
+          const res = await fetch(`${API}/api/admin/transaction/${index}`, { method: 'DELETE' });
+          const json = await res.json();
+          if (json.success) { allData = json.data; renderAll(); toast('Transaction deleted'); }
+        } catch(e) { toast('Failed', 'error'); }
+      };
+
+      document.getElementById('balanceForm').addEventListener('submit', async function(e) {
+        e.preventDefault();
+        const btn = document.getElementById('balanceBtn');
+        btn.disabled = true; btn.innerHTML = '<span class="spinner"></span> Updating...';
+        try {
+          const body = {
+            portfolioValue: parseFloat(document.getElementById('ePortfolio').value),
+            availableCash: parseFloat(document.getElementById('eCash').value),
+            investmentsValue: parseFloat(document.getElementById('eInvested').value),
+            giftCredits: parseFloat(document.getElementById('eGift').value),
+            totalTrades: parseInt(document.getElementById('eTrades').value)
+          };
+          const res = await fetch(`${API}/api/admin/update`, {
+            method: 'POST', headers: {'Content-Type':'application/json'}, body: JSON.stringify(body)
+          });
+          const json = await res.json();
+          if (json.success) { allData = json.data; renderAll(); toast('Balances updated!'); }
+        } catch(e) { toast('Failed', 'error'); }
+        btn.disabled = false; btn.innerHTML = '<i class="fas fa-save"></i> Update Balances';
+      });
+
+      document.getElementById('addTxForm').addEventListener('submit', async function(e) {
+        e.preventDefault();
+        const btn = document.getElementById('addTxBtn');
+        btn.disabled = true; btn.innerHTML = '<span class="spinner"></span> Adding...';
+        try {
+          const body = {
+            type: document.getElementById('txType').value,
+            asset: document.getElementById('txAsset').value,
+            code: document.getElementById('txAsset').value,
+            amount: parseFloat(document.getElementById('txAmount').value) || 0
+          };
+          const res = await fetch(`${API}/api/admin/transaction`, {
+            method: 'POST', headers: {'Content-Type':'application/json'}, body: JSON.stringify(body)
+          });
+          const json = await res.json();
+          if (json.success) { allData = json.data; renderAll(); toast('Transaction added!'); this.reset(); }
+        } catch(e) { toast('Failed', 'error'); }
+        btn.disabled = false; btn.innerHTML = '<i class="fas fa-plus"></i> Add';
+      });
+
+      document.getElementById('resetBtn').addEventListener('click', async function() {
+        if (!confirm('Are you sure? This will delete everything!')) return;
+        const btn = this;
+        btn.disabled = true; btn.innerHTML = '<span class="spinner"></span> Resetting...';
+        try {
+          const res = await fetch(`${API}/api/admin/reset`, { method: 'POST' });
+          const json = await res.json();
+          if (json.success) { allData = json.data; renderAll(); toast('System reset complete'); }
+        } catch(e) { toast('Failed', 'error'); }
+        btn.disabled = false; btn.innerHTML = '<i class="fas fa-trash-alt"></i> Reset Everything';
+      });
+
+      fetchData();
+    })();
+  </script>
+</body>
+  </html>
